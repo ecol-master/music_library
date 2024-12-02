@@ -10,12 +10,10 @@ import (
 )
 
 type Config struct {
-	TokenTTL  time.Duration `yaml:"token_ttl" env-required:"true"`
-	Secret    string        `yaml:"secret" env-required:"true"`
-	App       AppConfig
-	APIServer APIServerConfig
-	APIClient APIClientConfig
-	Postgres  PostgresConfig
+	App AppConfig
+	// APIServer APIServerConfig
+	APIClient APIClientConfig `yaml:"api_client"`
+	Postgres  PostgresConfig  `yaml:"postgres"`
 }
 
 type AppConfig struct {
@@ -24,7 +22,7 @@ type AppConfig struct {
 }
 
 type PostgresConfig struct {
-	Port           string        `yaml:"port" env:"PORT" env-default:"5432"`
+	Port           uint16        `yaml:"port" env:"PORT" env-default:"5432"`
 	Host           string        `yaml:"host" env:"HOST" env-default:"localhost"`
 	Name           string        `yaml:"name" env:"NAME" env-default:"music_lib"`
 	User           string        `yaml:"user" env:"USER" env-default:"user"`

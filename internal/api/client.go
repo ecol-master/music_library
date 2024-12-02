@@ -21,7 +21,7 @@ type Client struct {
 	config     config.APIClientConfig
 }
 
-func New(clientConfig config.APIClientConfig) *Client {
+func NewClient(clientConfig config.APIClientConfig) *Client {
 	return &Client{
 		HTTPClient: &http.Client{
 			Timeout: clientConfig.RequestTimeout,
@@ -56,4 +56,13 @@ func (c *Client) FetchSong(group, song string) (*SongInfo, error) {
 	default:
 		return nil, errors.New("unexpected status code")
 	}
+}
+
+// Only needed for testing purposes
+func (c *Client) FetchSongStatic(group, song string) (*SongInfo, error) {
+	return &SongInfo{
+		ReleaseDate: new(time.Time),
+		Text:        "text",
+		Link:        "link",
+	}, nil
 }
