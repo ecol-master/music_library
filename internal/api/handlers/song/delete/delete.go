@@ -6,11 +6,11 @@ import (
 	"net/http"
 )
 
-type Request struct {
+type request struct {
 	ID uint64 `json:"id"`
 }
 
-type Response struct {
+type response struct {
 	ID uint64 `json:"id"`
 }
 
@@ -22,7 +22,7 @@ func New(songDeleter SongDeleter) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		const op = "handlers.song.delete"
 
-		var req Request
+		var req request
 		err := json.NewDecoder(r.Body).Decode(&req)
 		if err != nil {
 			slog.Error(op, "error decoding request", err)
@@ -37,7 +37,7 @@ func New(songDeleter SongDeleter) http.HandlerFunc {
 			return
 		}
 
-		err = json.NewEncoder(w).Encode(Response{ID: id})
+		err = json.NewEncoder(w).Encode(response{ID: id})
 		if err != nil {
 			slog.Error(op, "error encoding response", err)
 			http.Error(w, "error encoding response", http.StatusInternalServerError)
