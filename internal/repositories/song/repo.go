@@ -2,6 +2,7 @@ package song
 
 import (
 	"fmt"
+	"log/slog"
 	"music_lib/internal/entities"
 	"music_lib/internal/utils"
 	"strings"
@@ -37,6 +38,35 @@ func (r *Repository) GetSongs(cursor_id, page_size uint64) ([]entities.Song, err
     `
 	err := r.db.Select(&songs, q, cursor_id, page_size)
 	return songs, err
+}
+
+func (r *Repository) GetSongText(id, cursor_id, offset uint64) ([]string, error) {
+	var text string
+	var q = `
+		SELECT "text" FROM "songs"
+		WHERE id = $1
+	`
+	err := r.db.Get(&text, q, id)
+	slog.Debug("Song text", "text", text)
+
+	if err != nil {
+		return nil, err
+	}
+
+	data := strings.Split(text, "\n\n")
+	slog.Debug("Song text", "data", data, "len", len(data), "cursor_id", cursor_id, "offset", offset)
+
+	if len(data) <= int(cursor_id) {
+		return []string{}, nil
+	}
+
+	var textArr []string
+	if len(data) > int(cursor_id+offset) {
+		textArr = data[cursor_id : cursor_id+offset]
+	} else {
+		textArr = data[cursor_id:]
+	}
+	return textArr, nil
 }
 
 func (r *Repository) InsertSong(song entities.Song) (uint64, error) {

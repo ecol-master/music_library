@@ -57,6 +57,7 @@ func (a *App) Run() error {
 
 		r.Get("/get_song", get.New(song_svc))
 		r.Get("/get_all_songs", get.NewAll(song_svc))
+		r.Get("/get_song_text", get.NewText(song_svc))
 		r.Post("/add", add.New(song_svc, client))
 		r.Post("/delete", delete.New(song_svc))
 		r.Post("/update", update.New(song_svc))

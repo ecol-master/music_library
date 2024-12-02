@@ -14,6 +14,8 @@ type request struct {
 type SongGetter interface {
 	GetSong(id uint64) (*entities.Song, error)
 	GetSongs(cursor_id uint64, page_size uint64) ([]entities.Song, error)
+
+	GetSongText(id, cursor_id, offset uint64) ([]string, error)
 }
 
 func New(songUpdater SongGetter) http.HandlerFunc {
@@ -81,6 +83,50 @@ func NewAll(songsGetter SongGetter) http.HandlerFunc {
 		resp := responsePaginated{
 			Songs:    songs,
 			CursorId: cursor_id,
+		}
+
+		err = json.NewEncoder(w).Encode(resp)
+		if err != nil {
+			slog.Error(op, "error encoding response", err)
+			http.Error(w, "error encoding response", http.StatusInternalServerError)
+			return
+		}
+	}
+}
+
+type requestGetPaginatedText struct {
+	ID       uint64 `json:"id"`
+	CursorId uint64 `json:"cursor_id"`
+	Offset   uint64 `json:"offset"`
+}
+
+type responseGetPaginatedText struct {
+	Text     []string `json:"text"`
+	CursorId uint64 `json:"cursor_id"`
+}
+
+func NewText(songsGetter SongGetter) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		const op = "handlers.song.get_all"
+
+		var req requestGetPaginatedText
+		err := json.NewDecoder(r.Body).Decode(&req)
+		if err != nil {
+			slog.Error(op, "error decoding request", err)
+			http.Error(w, "error decoding request", http.StatusBadRequest)
+			return
+		}
+
+		text, err := songsGetter.GetSongText(req.ID, req.CursorId, req.Offset)
+		if err != nil {
+			slog.Error(op, "error get song", err)
+			http.Error(w, "error get song", http.StatusInternalServerError)
+			return
+		}
+
+		resp := responseGetPaginatedText{
+			Text:     text,
+			CursorId: req.CursorId + req.Offset + 1,
 		}
 
 		err = json.NewEncoder(w).Encode(resp)
