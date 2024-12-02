@@ -56,6 +56,6 @@ func (s *Service) UpdateSong(updatedSong utils.UpdatedSong) error {
 	return s.repo.UpdateSong(updatedSong)
 }
 
-func (s *Service) FilterSongs(songFilter utils.FilteredSong) ([]entities.Song, error) {
-	return s.repo.FilterSongs(songFilter)
+func (s *Service) FilterSongs(filteredSong utils.FilteredSong, cursor_id uint64, page_size uint64) ([]entities.Song, error) {
+	return s.repo.FilterSongs(filteredSong, cursor_id, page_size)
 }

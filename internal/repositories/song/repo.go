@@ -96,7 +96,7 @@ func (r *Repository) UpdateSong(updatedSong utils.UpdatedSong) error {
 	return err
 }
 
-func (r *Repository) FilterSongs(songFilter utils.FilteredSong) ([]entities.Song, error) {
+func (r *Repository) FilterSongs(songFilter utils.FilteredSong, cursor_id, page_size uint64) ([]entities.Song, error) {
 	var songs []entities.Song
 
 	var queries []string
@@ -131,8 +131,14 @@ func (r *Repository) FilterSongs(songFilter utils.FilteredSong) ([]entities.Song
 		return nil, nil
 	}
 
-	query := fmt.Sprintf(`SELECT * FROM "songs" WHERE %s`, strings.Join(queries, " AND "))
+	query := fmt.Sprintf(`
+		SELECT * FROM "songs" 
+		WHERE %s AND id >= $%d
+        ORDER BY id ASC
+        LIMIT $%d
+		`, strings.Join(queries, " AND "), len(args)+1, len(args)+2)
 
+	args = append(args, cursor_id, page_size)
 	err := r.db.Select(&songs, query, args...)
 	return songs, err
 }
