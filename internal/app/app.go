@@ -38,6 +38,12 @@ func (a *App) Run() error {
 	}
 	slog.Debug("Suceessfully connected to database")
 
+	err = postgres.Migrate(db)
+	if err != nil {
+		return err
+	}
+	slog.Debug("Migrations successfully applied")
+
 	router := chi.NewRouter()
 
 	router.Use(middleware.RequestID)
