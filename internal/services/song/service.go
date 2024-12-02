@@ -41,9 +41,9 @@ func (s *Service) GetSong(id uint64) (*entities.Song, error) {
 	return s.repo.GetSong(id)
 }
 
-func (s *Service) GetSongs() ([]entities.Song, error) {
+func (s *Service) GetSongs(cursor_id, page_size uint64) ([]entities.Song, error) {
 	const op = "song.Service.GetSongs"
-	return s.repo.GetSongs()
+	return s.repo.GetSongs(cursor_id, page_size)
 }
 
 func (s *Service) DeleteSong(id uint64) (uint64, error) {

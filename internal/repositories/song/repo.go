@@ -27,12 +27,15 @@ func (r *Repository) GetSong(id uint64) (*entities.Song, error) {
 	return &song, err
 }
 
-func (r *Repository) GetSongs() ([]entities.Song, error) {
+func (r *Repository) GetSongs(cursor_id, page_size uint64) ([]entities.Song, error) {
 	var songs []entities.Song
 	var q = `
-		SELECT * FROM "songs"
-	`
-	err := r.db.Select(&songs, q)
+        SELECT * FROM songs
+        WHERE id >= $1
+        ORDER BY id ASC
+        LIMIT $2
+    `
+	err := r.db.Select(&songs, q, cursor_id, page_size)
 	return songs, err
 }
 
