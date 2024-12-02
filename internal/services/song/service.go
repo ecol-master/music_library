@@ -1,10 +1,12 @@
 package song
 
 import (
-	"github.com/pkg/errors"
 	"music_lib/internal/api"
 	"music_lib/internal/entities"
 	"music_lib/internal/repositories/song"
+	"music_lib/internal/utils"
+
+	"github.com/pkg/errors"
 )
 
 type Service struct {
@@ -34,7 +36,17 @@ func (s *Service) AddSong(group, song string, client *api.Client) (uint64, error
 	return s.repo.InsertSong(newSong)
 }
 
+func (s *Service) GetSong(id uint64) (*entities.Song, error) {
+	const op = "song.Service.GetSong"
+	return s.repo.GetSong(id)
+}
+
 func (s *Service) DeleteSong(id uint64) (uint64, error) {
 	const op = "song.Service.DeleteSong"
 	return s.repo.DeleteSong(id)
+}
+
+func (s *Service) UpdateSong(updatedSong utils.UpdatedSong) error {
+	const op = "song.Service.UpdateSong"
+	return s.repo.UpdateSong(updatedSong)
 }
