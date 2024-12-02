@@ -5,6 +5,7 @@ import (
 	"log/slog"
 	"music_lib/internal/api"
 	"music_lib/internal/api/handlers/song/add"
+	"music_lib/internal/api/handlers/song/delete"
 	"music_lib/internal/config"
 	"music_lib/internal/dbs/postgres"
 	"net/http"
@@ -46,6 +47,7 @@ func (a *App) Run() error {
 		client := api.NewClient(a.config.APIClient)
 
 		r.Post("/add", add.New(song_svc, client))
+		r.Post("/delete", delete.New(song_svc))
 	})
 
 	addr := fmt.Sprintf("%s:%d", a.config.App.Host, a.config.App.Port)

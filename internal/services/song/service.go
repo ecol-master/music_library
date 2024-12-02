@@ -33,3 +33,8 @@ func (s *Service) AddSong(group, song string, client *api.Client) (uint64, error
 
 	return s.repo.InsertSong(newSong)
 }
+
+func (s *Service) DeleteSong(id uint64) (uint64, error) {
+	const op = "song.Service.DeleteSong"
+	return s.repo.DeleteSong(id)
+}
