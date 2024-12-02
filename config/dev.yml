@@ -1,0 +1,13 @@
+app:
+  port: 8080
+  host: "localhost"
+api_client:
+  base_url: "http://localhost:5000"
+  request_timeout: 5s
+postgres:
+  port: 5432
+  host: "localhost"
+  name: "music_lib"
+  user: "postgres"
+  password: "postgres"
+  conn_time_exceed: 3s
