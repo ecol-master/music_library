@@ -41,6 +41,11 @@ func (s *Service) GetSong(id uint64) (*entities.Song, error) {
 	return s.repo.GetSong(id)
 }
 
+func (s *Service) GetSongs() ([]entities.Song, error) {
+	const op = "song.Service.GetSongs"
+	return s.repo.GetSongs()
+}
+
 func (s *Service) DeleteSong(id uint64) (uint64, error) {
 	const op = "song.Service.DeleteSong"
 	return s.repo.DeleteSong(id)
@@ -49,4 +54,8 @@ func (s *Service) DeleteSong(id uint64) (uint64, error) {
 func (s *Service) UpdateSong(updatedSong utils.UpdatedSong) error {
 	const op = "song.Service.UpdateSong"
 	return s.repo.UpdateSong(updatedSong)
+}
+
+func (s *Service) FilterSongs(songFilter utils.FilteredSong) ([]entities.Song, error) {
+	return s.repo.FilterSongs(songFilter)
 }
