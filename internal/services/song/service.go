@@ -46,7 +46,7 @@ func (s *Service) GetSongs(cursor_id, page_size uint64) ([]entities.Song, error)
 	return s.repo.GetSongs(cursor_id, page_size)
 }
 
-func (s *Service) 	GetSongText(id, cursor_id, offset uint64) ([]string, error){
+func (s *Service) GetSongText(id, cursor_id, offset uint64) ([]string, error) {
 	//const op = "song.Service.GetSongText"
 	return s.repo.GetSongText(id, cursor_id, offset)
 }
@@ -57,7 +57,7 @@ func (s *Service) DeleteSong(id uint64) (uint64, error) {
 }
 
 func (s *Service) UpdateSong(updatedSong utils.UpdatedSong) error {
-	const op = "song.Service.UpdateSong"
+	//const op = "song.Service.UpdateSong"
 	return s.repo.UpdateSong(updatedSong)
 }
 
