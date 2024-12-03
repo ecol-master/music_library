@@ -2,14 +2,14 @@ package get
 
 import (
 	"encoding/json"
+	"github.com/go-chi/chi/v5"
 	"log/slog"
 	"music_lib/internal/entities"
 	"net/http"
-)
+	"strconv"
 
-type request struct {
-	ID uint64 `json:"id"`
-}
+	_ "music_lib/docs"
+)
 
 type SongGetter interface {
 	GetSong(id uint64) (*entities.Song, error)
@@ -18,19 +18,31 @@ type SongGetter interface {
 	GetSongText(id, cursor_id, offset uint64) ([]string, error)
 }
 
+// @Summary GetSong
+// @Description Get song by ID
+// @Tags get
+// @Accept json
+// @Produce json
+// @Param id path uint64 true "Song ID" 
+// @Success 200 {object} entities.Song
+// @Failure 400 {string} string
+// @Failure 500 {string} string
+// @Router /get_song/{id} [get]  // путь без параметра в URL
+
 func New(songUpdater SongGetter) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		const op = "handlers.song.get"
 
-		var req request
-		err := json.NewDecoder(r.Body).Decode(&req)
+		idParam := chi.URLParam(r, "id")
+		slog.Debug(op, "id", idParam)
+		id, err := strconv.ParseUint(idParam, 10, 64)
+
 		if err != nil {
-			slog.Error(op, "error decoding request", err)
-			http.Error(w, "error decoding request", http.StatusBadRequest)
+			http.Error(w, "Invalid ID", http.StatusBadRequest)
 			return
 		}
 
-		song, err := songUpdater.GetSong(req.ID)
+		song, err := songUpdater.GetSong(id)
 		if err != nil {
 			slog.Error(op, "error get song", err)
 			http.Error(w, "error get song", http.StatusInternalServerError)
@@ -56,6 +68,16 @@ type responsePaginated struct {
 	CursorId uint64          `json:"cursor_id"`
 }
 
+// @Summary GetAllSongs
+// @Description Get all songs with pagination
+// @Tags get
+// @Accept json
+// @Produce json
+// @Param request body requestPaginated true "Pagination parameters"
+// @Success 200 {object} responsePaginated
+// @Failure 400 {string} string
+// @Failure 500 {string} string
+// @Router /get_all_songs [get]
 func NewAll(songsGetter SongGetter) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		const op = "handlers.song.get_all"
@@ -102,9 +124,19 @@ type requestGetPaginatedText struct {
 
 type responseGetPaginatedText struct {
 	Text     []string `json:"text"`
-	CursorId uint64 `json:"cursor_id"`
+	CursorId uint64   `json:"cursor_id"`
 }
 
+// @Summary GetSongText
+// @Description Get song text by ID with pagination
+// @Tags get
+// @Accept json
+// @Produce json
+// @Param request body requestGetPaginatedText true "Pagination parameters"
+// @Success 200 {object} responseGetPaginatedText
+// @Failure 400 {string} string
+// @Failure 500 {string} string
+// @Router /get_song_text [get]
 func NewText(songsGetter SongGetter) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		const op = "handlers.song.get_all"

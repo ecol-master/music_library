@@ -20,6 +20,16 @@ type SongAdder interface {
 	AddSong(group, song string, client *api.Client) (uint64, error)
 }
 
+// @Summary Add song
+// @Description Add song to the library
+// @Tags add
+// @Accept json
+// @Produce json
+// @Param request body request true "Request"
+// @Success 200 {object} response
+// @Failure 400 {string} string
+// @Failure 500 {string} string
+// @Router /add [post]
 func New(songAdder SongAdder, client *api.Client) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		const op = "handlers.song.add"

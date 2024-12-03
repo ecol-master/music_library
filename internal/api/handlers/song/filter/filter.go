@@ -23,6 +23,16 @@ type SongsFilter interface {
 	FilterSongs(filteredSong utils.FilteredSong, cursor_id uint64, page_size uint64) ([]entities.Song, error)
 }
 
+// @Summary FilterSongs
+// @Description Filter songs by Song fields
+// @Tags filter
+// @Accept json
+// @Produce json
+// @Param request body requestPaginated true "Request"
+// @Success 200 {object} responsePaginated
+// @Failure 400 {string} string
+// @Failure 500 {string} string
+// @Router /filter_songs [get]
 func New(songFilter SongsFilter) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		const op = "handlers.song.filter"
@@ -44,12 +54,12 @@ func New(songFilter SongsFilter) http.HandlerFunc {
 		}
 
 		cursor_id := req.CursorId
-		if len(songs) > 0{
-			cursor_id = songs[len(songs) - 1].ID + 1
+		if len(songs) > 0 {
+			cursor_id = songs[len(songs)-1].ID + 1
 		}
 
 		resp := responsePaginated{
-			Songs: songs,
+			Songs:    songs,
 			CursorId: cursor_id,
 		}
 		err = json.NewEncoder(w).Encode(resp)

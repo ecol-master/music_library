@@ -13,6 +13,9 @@ import (
 	"music_lib/internal/dbs/postgres"
 	"net/http"
 
+	"github.com/swaggo/http-swagger"
+	_ "music_lib/docs"
+
 	repo "music_lib/internal/repositories/song"
 	service "music_lib/internal/services/song"
 
@@ -55,16 +58,20 @@ func (a *App) Run() error {
 		song_svc := service.New(repo.NewRepository(db))
 		client := api.NewClient(a.config.APIClient)
 
-		r.Get("/get_song", get.New(song_svc))
+		r.Get("/get_song/{id}", get.New(song_svc))
 		r.Get("/get_all_songs", get.NewAll(song_svc))
+		r.Get("/filter_songs", filter.New(song_svc))
 		r.Get("/get_song_text", get.NewText(song_svc))
 		r.Post("/add", add.New(song_svc, client))
-		r.Post("/delete", delete.New(song_svc))
-		r.Post("/update", update.New(song_svc))
-		r.Post("/filter", filter.New(song_svc))
+		r.Delete("/delete_song/{id}", delete.New(song_svc))
+		r.Put("/update_song", update.New(song_svc))
+
+
+		r.Get("/swagger/*", httpSwagger.WrapHandler)
 	})
 
 	addr := fmt.Sprintf("%s:%d", a.config.App.Host, a.config.App.Port)
+	slog.Info("Starting server on", "address", fmt.Sprintf("http://%s", addr))
 	srv := &http.Server{
 		Addr:    addr,
 		Handler: router,
