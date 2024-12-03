@@ -20,7 +20,7 @@ func New(repo *song.Repository) *Service {
 func (s *Service) AddSong(group, song string, client *api.Client) (uint64, error) {
 	const op = "song.Service.AddSong"
 
-	songInfo, err := client.FetchSongStatic(group, song)
+	songInfo, err := client.FetchSong(group, song)
 	if err != nil {
 		return 0, errors.Wrap(err, op)
 	}
@@ -37,22 +37,22 @@ func (s *Service) AddSong(group, song string, client *api.Client) (uint64, error
 }
 
 func (s *Service) GetSong(id uint64) (*entities.Song, error) {
-	const op = "song.Service.GetSong"
+	//const op = "song.Service.GetSong"
 	return s.repo.GetSong(id)
 }
 
 func (s *Service) GetSongs(cursor_id, page_size uint64) ([]entities.Song, error) {
-	const op = "song.Service.GetSongs"
+	//const op = "song.Service.GetSongs"
 	return s.repo.GetSongs(cursor_id, page_size)
 }
 
 func (s *Service) 	GetSongText(id, cursor_id, offset uint64) ([]string, error){
-	const op = "song.Service.GetSongText"
+	//const op = "song.Service.GetSongText"
 	return s.repo.GetSongText(id, cursor_id, offset)
 }
 
 func (s *Service) DeleteSong(id uint64) (uint64, error) {
-	const op = "song.Service.DeleteSong"
+	//const op = "song.Service.DeleteSong"
 	return s.repo.DeleteSong(id)
 }
 
